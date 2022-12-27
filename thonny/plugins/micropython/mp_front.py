@@ -167,6 +167,9 @@ class BareMetalMicroPythonProxy(MicroPythonProxy):
     def should_restart_interpreter_before_run(self):
         return get_workbench().get_option(self.backend_name + ".restart_interpreter_before_run")
 
+    def stop_restart_kills_user_program(self) -> bool:
+        return False
+
     def _get_backend_launcher_path(self) -> str:
         import thonny.plugins.micropython.bare_metal_backend
 
@@ -982,6 +985,10 @@ def list_serial_ports():
         return comports()
     finally:
         os.path.islink = old_islink
+
+
+def list_serial_port_infos():
+    return [f"{p.device} ({p.hwid})" for p in list_serial_ports()]
 
 
 def port_exists(device):

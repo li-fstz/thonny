@@ -15,9 +15,13 @@ UNSTABLE_VERSION = r"\d{8}-unstable-v1.19.1-\d+-[a-z0-9]{10}"
 PREV_RELEVANT_VERSION = "1.18"
 PREV_RELEVANT_VERSION_IN_URL = "20220117-v1.18"
 
-PIMORONI_LATEST_STABLE_VERSION = "1.19.6"
-PIMORONI_LATEST_UNSTABLE_VERSION = "1.19.7"
+PIMORONI_LATEST_STABLE_VERSION = "1.19.10"
+PIMORONI_LATEST_UNSTABLE_VERSION = "1.19.11"
 PIMORONI_PREV_RELEVANT_VERSION = "1.18.7"
+
+PIMORONI_LATEST_STABLE_VERSION_ASSETS = f"https://github.com/pimoroni/pimoroni-pico/releases/expanded_assets/v{PIMORONI_LATEST_STABLE_VERSION}"
+PIMORONI_LATEST_UNSTABLE_VERSION_ASSETS = PIMORONI_LATEST_UNSTABLE_VERSION and f"https://github.com/pimoroni/pimoroni-pico/releases/expanded_assets/v{PIMORONI_LATEST_UNSTABLE_VERSION}"
+PIMORONI_PREV_RELEVANT_VERSION_ASSETS = f"https://github.com/pimoroni/pimoroni-pico/releases/expanded_assets/v{PIMORONI_PREV_RELEVANT_VERSION}"
 
 
 class IndexParser(HTMLParser):
@@ -131,6 +135,13 @@ pimoroni_variants = [
         "title": "Pico W (with Pimoroni libs for Enviro)",
     },
     {
+        "_id": "pimoroni-picow_galactic_unicorn",
+        "vendor": "Raspberry Pi",
+        "model": "Pico W",
+        "family": "rp2",
+        "title": "Pico W (with Pimoroni libs for Galactic Unicorn)",
+    },
+    {
         "_id": "pimoroni-tiny2040",
         "vendor": "Pimoroni",
         "model": "Tiny 2040",
@@ -153,25 +164,30 @@ for variant in pimoroni_variants:
         rf"/{variant['_id']}-v?({PIMORONI_LATEST_STABLE_VERSION})-micropython.uf2$",
     )
 
-    unstable_url_pattern = stable_url_pattern.replace(
-        PIMORONI_LATEST_STABLE_VERSION, PIMORONI_LATEST_UNSTABLE_VERSION
-    )
     old_url_pattern = stable_url_pattern.replace(
         PIMORONI_LATEST_STABLE_VERSION, PIMORONI_PREV_RELEVANT_VERSION
     )
 
     variant["info_url"] = "https://github.com/pimoroni/pimoroni-pico/releases"
     variant["downloads"] = find_download_links(
-        "https://github.com/pimoroni/pimoroni-pico/releases",
+        PIMORONI_LATEST_STABLE_VERSION_ASSETS,
         stable_url_pattern,
-        1,
-        unstable_url_pattern,
         1,
         url_prefix="https://github.com",
     )
+    if (PIMORONI_LATEST_UNSTABLE_VERSION):
+        unstable_url_pattern = stable_url_pattern.replace(
+            PIMORONI_LATEST_STABLE_VERSION, PIMORONI_LATEST_UNSTABLE_VERSION
+        )
+        variant["downloads"] += find_download_links(
+            PIMORONI_LATEST_UNSTABLE_VERSION_ASSETS,
+            unstable_url_pattern,
+            1,
+            url_prefix="https://github.com",
+        )
     variant["downloads"] += find_download_links(
         [
-            "https://github.com/pimoroni/pimoroni-pico/releases",
+            PIMORONI_PREV_RELEVANT_VERSION_ASSETS,
             "https://github.com/pimoroni/pimoroni-pico/releases?page=2",
         ],
         old_url_pattern,
@@ -192,12 +208,12 @@ simplified_microbits = [
         "info_url": "https://github.com/bbcmicrobit/micropython/releases/",
         "downloads": [
             {
-                "version": "1.0.1",
-                "url": "https://github.com/bbcmicrobit/micropython/releases/download/v1.0.1/microbit-micropython-v1.0.1.hex",
+                "version": "1.1.1",
+                "url": "https://github.com/bbcmicrobit/micropython/releases/download/v1.1.1/micropython-microbit-v1.1.1.hex",
             },
             {
-                "version": "1.1.0-beta.1",
-                "url": "https://github.com/bbcmicrobit/micropython/releases/download/v1.1.0-beta.1/microbit-micropython-v1.1.0-beta.1.hex",
+                "version": "1.0.1",
+                "url": "https://github.com/bbcmicrobit/micropython/releases/download/v1.0.1/microbit-micropython-v1.0.1.hex",
             },
         ],
         "popular": True,
@@ -210,12 +226,12 @@ simplified_microbits = [
         "info_url": "https://github.com/microbit-foundation/micropython-microbit-v2/releases/",
         "downloads": [
             {
-                "version": "2.0.0",
-                "url": "https://github.com/microbit-foundation/micropython-microbit-v2/releases/download/v2.0.0/micropython-microbit-v2.0.0.hex",
+                "version": "2.1.1",
+                "url": "https://github.com/microbit-foundation/micropython-microbit-v2/releases/download/v2.1.1/micropython-microbit-v2.1.1.hex",
             },
             {
-                "version": "2.1.0-beta.1",
-                "url": "https://github.com/microbit-foundation/micropython-microbit-v2/releases/download/v2.1.0-beta.1/micropython-microbit-v2.1.0-beta.1.hex",
+                "version": "2.0.0",
+                "url": "https://github.com/microbit-foundation/micropython-microbit-v2/releases/download/v2.0.0/micropython-microbit-v2.0.0.hex",
             },
         ],
         "popular": True,
